@@ -1,0 +1,162 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R2_ESP
+!
+!
+!
+enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0
+!
+!
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool GUEST
+ dns-server 2001:1200:FC14:10::11
+!
+ipv6 dhcp pool INTERNAL
+ dns-server 2001:1200:FC14:10::11
+!
+ipv6 dhcp pool TI
+ dns-server 2001:1200:FC14:10::11
+!
+ipv6 dhcp pool NATIVE
+ dns-server 2001:1200:FC14:10::11
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX1017R9AH-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ ipv6 traffic-filter SNMP_ACCESS in
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/0.30
+ encapsulation dot1Q 30
+ no ip address
+ ipv6 traffic-filter SNMP_ACCESS in
+ ipv6 address 2001:1200:FB24:30::1/64
+ ipv6 nd other-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server GUEST
+!
+interface FastEthernet0/0.50
+ encapsulation dot1Q 50
+ no ip address
+ ipv6 traffic-filter SNMP_ACCESS in
+ ipv6 address 2001:1200:FB24:50::1/64
+ ipv6 nd other-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server INTERNAL
+!
+interface FastEthernet0/0.65
+ encapsulation dot1Q 65
+ no ip address
+ ipv6 traffic-filter SNMP_ACCESS in
+ ipv6 address 2001:1200:FB24:65::1/64
+ ipv6 nd other-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server TI
+!
+interface FastEthernet0/0.99
+ encapsulation dot1Q 99
+ no ip address
+ ipv6 traffic-filter SNMP_ACCESS in
+ ipv6 address 2001:1200:FB24:99::1/64
+ ipv6 nd other-config-flag
+ ipv6 ospf 1 area 0
+ ipv6 dhcp server NATIVE
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ no ip address
+ ipv6 address 2001:1200:FD24:1::1/64
+ ipv6 ospf 1 area 0
+!
+interface Serial0/0/1
+ no ip address
+ clock rate 2000000
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ipv6 router ospf 1
+ router-id 3.3.3.3
+ log-adjacency-changes
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ipv6 access-list SNMP_ACCESS
+ permit udp 2001:1200:FB24::/64 any eq snmp
+ deny udp any any eq snmp
+ permit ipv6 any any
+ipv6 access-list ACL_MADRID
+ deny tcp 2001:1200:FB24:50::/64 host 2001:1200:FC14:10::10 eq www
+ permit tcp 2001:1200:FB24:50::/64 host 2001:1200:FC14:10::10 eq 443
+ deny tcp 2001:1200:FB24:65::/64 host 2001:1200:FC14:10::10 eq www
+ permit tcp 2001:1200:FB24:65::/64 host 2001:1200:FC14:10::10 eq 443
+ deny tcp 2001:1200:FB24::/64 host 2001:1200:FC14:10::10 eq www
+ permit tcp 2001:1200:FB24::/64 host 2001:1200:FC14:10::10 eq 443
+ permit tcp 2001:1200:FB24:30::/64 host 2001:1200:FC14:10::10 eq www
+ deny tcp 2001:1200:FB24:30::/64 host 2001:1200:FC14:10::10 eq 443
+ permit ipv6 any any
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password cisco
+ login
+line vty 5 15
+ password cisco
+ login
+!
+!
+!
+end
+
